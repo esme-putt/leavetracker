@@ -21,7 +21,7 @@ struct TripListView: View {
                 }
                 .onDelete(perform: deleteTrip)
             }
-            .navigationBarTitle("Trips")
+            .navigationBarTitle("Upcoming leave")
             .navigationBarItems(trailing: Button(action: {
                 showingAddTrip = true
             }) {

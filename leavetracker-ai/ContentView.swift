@@ -8,8 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var tripStore = TripStore()
+    @StateObject var leaveInfo = LeaveInfo()
+    @StateObject var nonLeaveDateStore = NonLeaveDateStore()
+
     var body: some View {
-        DashboardView()
+        TabView {
+            DashboardView(leaveInfo: leaveInfo, tripStore: tripStore, nonLeaveDateStore: nonLeaveDateStore)
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+            
+            TripListView(tripStore: tripStore)
+                .tabItem {
+                    Label("Leave", systemImage: "paperplane")
+                }
+            
+            NonLeaveDateListView(nonLeaveDateStore: nonLeaveDateStore)
+                .tabItem {
+                    Label("Holidays", systemImage: "clock")
+                }
+            
+            LeaveInfoForm(leaveInfo: leaveInfo)
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+        }
     }
 }
 

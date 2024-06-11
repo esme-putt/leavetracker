@@ -3,9 +3,9 @@ import SwiftUI
 import SwiftUICharts
 
 struct DashboardView: View {
-    @StateObject var leaveInfo = LeaveInfo()
-    @StateObject var tripStore = TripStore()
-    @StateObject var nonLeaveDateStore = NonLeaveDateStore()
+    @ObservedObject var leaveInfo: LeaveInfo
+    @ObservedObject var tripStore: TripStore
+    @ObservedObject var nonLeaveDateStore: NonLeaveDateStore
     
     @State private var selectedDate = Date()
     @State private var currentBalance: String = "0"
@@ -36,7 +36,7 @@ struct DashboardView: View {
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.yellow)
+                        .background(Color.backgroundColor)
                         .cornerRadius(10)
                         .padding(.vertical, 10)
                     
@@ -53,36 +53,6 @@ struct DashboardView: View {
                         .chartStyle(ChartStyle(backgroundColor: Color.backgroundColor, foregroundColor: ColorGradient(Color.primaryColor.opacity(0.4), Color.primaryColor)))
                         .frame(height: 300)
                         .padding(.vertical, 10)
-                    }
-
-                    NavigationLink(destination: LeaveInfoForm(leaveInfo: leaveInfo)) {
-                        Text("Enter Leave Information")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                    
-                    NavigationLink(destination: TripListView(tripStore: tripStore)) {
-                        Text("Manage Trips")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(10)
-                    }
-
-                    NavigationLink(destination: NonLeaveDateListView(nonLeaveDateStore: nonLeaveDateStore)) {
-                        Text("Manage Non-Leave Dates")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.purple)
-                            .cornerRadius(10)
                     }
                 }
             }
@@ -106,15 +76,15 @@ struct DashboardView: View {
         let today = Date()
         
         // Only hold data from now until a year from now
-        let sixMonthsLater = calendar.date(byAdding: .month, value: 6, to: today) ?? today
-        let daysInYear = calendar.dateComponents([.day], from: today, to: sixMonthsLater).day ?? 0
+        let timeFromNow = calendar.date(byAdding: .month, value: 3, to: today) ?? today
+        let daysInYear = calendar.dateComponents([.day], from: today, to: timeFromNow).day ?? 0
 
         var currentDate = today
         for _ in 0..<daysInYear {
             // Calculate project balance for this date
             leaveBalanceData.append((currentDate.formatted(), calculateProjectedBalance(for: currentDate)))
 
-            // Iterate
+            // Iterate every two weeks
             currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
         }
     }
@@ -167,6 +137,6 @@ struct DashboardView: View {
 
 struct DashboardView_Previews: PreviewProvider {
     static var previews: some View {
-        DashboardView()
+        DashboardView(leaveInfo: LeaveInfo(), tripStore: TripStore(), nonLeaveDateStore: NonLeaveDateStore())
     }
 }
